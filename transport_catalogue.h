@@ -3,12 +3,13 @@
 #include <unordered_set>
 #include <deque>
 #include <string_view>
+#include <vector>
 #include <string>
 #include "geo.h"
 
 struct Bus {
     std::string name;
-    std::unordered_set<std::string_view> route;
+    std::vector<std::string_view> route;
     bool circle = false;
 
 };
@@ -29,11 +30,6 @@ public:
     const Bus* FindRouteByName(std::string_view name) const;
     const Stop* FindBusStopByName(std::string_view name) const;
     void GetRouteInfo(std::string_view request) const;
-    static void TrimStr(std::string &str){
-        size_t begin = str.find_first_not_of(' ');
-        size_t end = str.find_last_not_of(' ')+1;
-        str = str.substr(begin,end-begin);
-    }
 
 private:
     std::unordered_map<std::string_view,const Stop *> stop_indexes_;

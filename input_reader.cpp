@@ -6,6 +6,7 @@
 #include <iostream>
 #include <array>
 #include<string>
+#include <vector>
 
 using namespace std;
 /**
@@ -111,16 +112,8 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
     for(auto &[command, id, description] : commands_){
         if(command == "Stop"){
             std::string name = move(id);
-            size_t pos = description.find(',');
-            std::string pos_x = description.substr(1,pos-1);
-            std::string pos_y = description.substr(pos+2, description.size() - pos -1);
-            //cout <<"#" << pos_x << "#" << pos_y <<"#"<< std::endl;
-            //auto coord[2] = description.split(',');
-            // double latitude = 0;
-            //double x = to_double(pos_x);
-            //double longitude = 0; //double(pos_y);
-            //cout << latitude << "y: " << longitude << std::endl;
-            catalogue.AddBusStop(move(Stop{name,{std::stold(pos_x),std::stold(pos_y)}}));
+            Coordinates coord = ParseCoordinates(description);
+            catalogue.AddBusStop(move(Stop{name,coord}));
             //cout << "Name: "<< id << " coords: "<< description << endl;
         }
 
@@ -140,20 +133,7 @@ void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) 
             }
             std::string stop_name="";
             const Stop *stop;
-            std::unordered_set<std::string_view> route;
-            while(f_pos != std::string::npos){
-
-                stop_name = description.substr(pos+1, f_pos - pos -2);
-                stop = catalogue.FindBusStopByName(stop_name);
-                //std::cout << "smth:" << stop->name << endl;
-                route.insert(stop->name);
-                pos=f_pos+1;
-                f_pos=description.find(divider,pos);
-            }
-            stop_name = description.substr(pos+1, description.size() - pos);
-            stop = catalogue.FindBusStopByName(stop_name);
-            route.insert(stop->name);
-
+            std::vector<std::string_view> route = ParseRoute(description);
             catalogue.AddBusRoute(Bus{id,route,circle});
             //cout << " id: "<< id << " Route: "<< description << endl;
         }else{
