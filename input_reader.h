@@ -5,7 +5,7 @@
 
 #include "geo.h"
 #include "transport_catalogue.h"
-
+std::vector<std::string_view> Split(std::string_view string, char delim);
 struct CommandDescription {
     // Определяет, задана ли команда (поле command непустое)
     explicit operator bool() const {
