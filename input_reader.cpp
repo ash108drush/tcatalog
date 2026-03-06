@@ -109,38 +109,45 @@ void InputReader::ParseLine(std::string_view line) {
 
 void InputReader::ApplyCommands([[maybe_unused]] TransportCatalogue& catalogue) const {
     // Реализуйте метод самостоятельно
-    for(auto &[command, id, description] : commands_){
-        if(command == "Stop"){
-            std::string name = move(id);
-            Coordinates coord = ParseCoordinates(description);
-            catalogue.AddBusStop(move(Stop{name,coord}));
+    std::vector<bool> v_stop(commands_.size(),false);
+    int i=0;
+    for( auto iter = commands_.begin(); iter != commands_.end(); ++iter){
+
+        if(iter->command == "Stop"){
+            std::string name = iter->id;
+            Coordinates coord = ParseCoordinates(iter->description);
+            catalogue.AddBusStop(Stop{name,coord});
             //cout << "Name: "<< id << " coords: "<< description << endl;
+            v_stop[i]=true;
         }
-
+        ++i;
     }
 
-    for(auto &[command, id, description] : commands_){
-        if(command == "Bus") {
-            std::string name = move(id);
-            size_t pos = 0;
-            bool circle = true;
-            char divider = '>';
-            size_t f_pos = description.find( divider);
-            if(f_pos == std::string::npos){
-                divider = '-';
-                f_pos = description.find( divider);
-                circle = false;
+    for(i=0; i< commands_.size();i++){
+        if(!v_stop[i]){
+           auto iter = commands_.begin() + i;
+            if(iter->command == "Bus") {
+                std::string name = iter->id;
+                size_t pos = 0;
+                bool circle = true;
+                char divider = '>';
+                size_t f_pos = iter->description.find( divider);
+                if(f_pos == std::string::npos){
+                    circle = false;
+                }
+                std::string stop_name="";
+                const Stop *stop;
+                std::vector<std::string_view> route = ParseRoute(iter->description);
+                catalogue.AddBusRoute(Bus{name,route,circle});
+                //cout << " id: "<< id << " Route: "<< description << endl;
+            }else{
+                assert("Command not found");
+                //cout << "c: " << command << " id: "<< id << " d: "<< description << endl;
+
             }
-            std::string stop_name="";
-            const Stop *stop;
-            std::vector<std::string_view> route = ParseRoute(description);
-            catalogue.AddBusRoute(Bus{id,route,circle});
-            //cout << " id: "<< id << " Route: "<< description << endl;
-        }else{
-            assert("Command not found");
-            //cout << "c: " << command << " id: "<< id << " d: "<< description << endl;
-
         }
     }
+
+
 
 }
