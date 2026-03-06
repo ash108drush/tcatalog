@@ -30,6 +30,7 @@ public:
     const Bus* FindRouteByName(std::string_view name) const;
     const Stop* FindBusStopByName(std::string_view name) const;
     void GetRouteInfo(std::string_view request) const;
+    double GetDistance(std::pair<Stop *, Stop *>);
 
 private:
     std::unordered_map<std::string_view,const Stop *> stop_indexes_;

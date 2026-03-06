@@ -6,6 +6,6 @@ void ParseAndPrintStat(const TransportCatalogue& transport_catalogue, std::strin
     // Реализуйте самостоятельно
     request = "256";
     transport_catalogue.GetRouteInfo(request);
-    std::setprecision(6);
+  //  std::setprecision(6);
     output <<"printstat: "  << request << std::endl;
 }
